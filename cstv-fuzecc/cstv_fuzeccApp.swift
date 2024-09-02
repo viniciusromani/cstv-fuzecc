@@ -11,7 +11,11 @@ import SwiftUI
 struct cstv_fuzeccApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // TODO: improve it with DI
+            let network = RemoteNetwork()
+            let service = MatchService(network: network)
+            let viewModel = RemoteMatchesViewModel(service: service)
+            MatchesView(viewModel: viewModel)
         }
     }
 }
