@@ -49,6 +49,7 @@ class RemoteMatchesViewModel: MatchesViewModel {
     
     func sort(matches: [Match]) -> [Match] {
         let formatter = CachedDateFormatter.shared.matchScheduleFormatter()
+        let sortOrder = ["running", "not_started", "finished"]
         
         return matches.sorted { lhs, rhs in
             if lhs.status == rhs.status {
@@ -57,8 +58,8 @@ class RemoteMatchesViewModel: MatchesViewModel {
                 return lhsDate < rhsDate
             }
             
-            let lhsStatus = ["running", "not_started", "finished"].firstIndex(of: lhs.status) ?? 0
-            let rhsStatus = ["running", "not_started", "finished"].firstIndex(of: rhs.status) ?? 0
+            let lhsStatus = sortOrder.firstIndex(of: lhs.status) ?? 0
+            let rhsStatus = sortOrder.firstIndex(of: rhs.status) ?? 0
             return lhsStatus < rhsStatus
         }
     }
