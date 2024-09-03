@@ -7,27 +7,24 @@
 
 import SwiftUI
 
-struct MatchesView<ViewModel: MatchesViewModel>: View {
+struct MatchesView: View {
     @EnvironmentObject var coordinator: AppCoordinator
-    @ObservedObject var viewModel: ViewModel
+    @ObservedObject var viewModel: RemoteMatchesViewModel
     
     var body: some View {
-        List(viewModel.matches) { match in
-            MatchRowView(match: match) { id in
-                self.coordinator.navigateToDetails(id: id)
+        AsyncContentView(source: viewModel) { matches in
+            List(matches) { match in
+                MatchRowView(match: match) { id in
+                    self.coordinator.navigateToDetails(id: id)
+                }
             }
+            .listStyle(.plain)
+            .refreshable { viewModel.load() }
         }
-        .listStyle(.plain)
         .navigationTitle("Partidas")
-        .onAppear {
-            viewModel.fetchMatches()
-        }
-        .refreshable {
-            viewModel.fetchMatches()
-        }
     }
 }
 
-#Preview {
-    MatchesView<MockMatchesViewModel>(viewModel: MockMatchesViewModel())
-}
+//#Preview {
+//    MatchesView<MockMatchesViewModel>(viewModel: MockMatchesViewModel())
+//}

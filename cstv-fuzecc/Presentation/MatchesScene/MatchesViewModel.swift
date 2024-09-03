@@ -8,13 +8,8 @@
 import Foundation
 import Combine
 
-protocol MatchesViewModel: ObservableObject {
-    var matches: [Match] { get set }
-    func fetchMatches()
-}
-
-class RemoteMatchesViewModel: MatchesViewModel {
-    @Published var matches: [Match] = []
+class RemoteMatchesViewModel: Loadable {
+    @Published var state: LoadingState<[Match]> = .idle
     
     private let service: MatchServiceProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -23,10 +18,11 @@ class RemoteMatchesViewModel: MatchesViewModel {
         self.service = service
     }
     
-    func fetchMatches() {
+    func load() {
         let formatter = CachedDateFormatter.shared.fetchMatchesFilterFormatter()
         let today = formatter.date(from: formatter.string(from: Date())) ?? Date()
         
+        state = .loading
         service.getMatches()
             .receive(on: DispatchQueue.main)
             .map { matches in
@@ -37,12 +33,13 @@ class RemoteMatchesViewModel: MatchesViewModel {
             }
             .sink { result in
                 switch result {
-                case .failure(let error): print("Error \(error)")
+                case .failure(let error): 
+                    self.state = .failed(error)
                 case .finished: break
                 }
             } receiveValue: { [weak self] matches in
                 guard let strong = self else { return }
-                strong.matches = strong.sort(matches: matches)
+                strong.state = .loaded(strong.sort(matches: matches))
             }
             .store(in: &cancellables)
     }
@@ -62,13 +59,5 @@ class RemoteMatchesViewModel: MatchesViewModel {
             let rhsStatus = sortOrder.firstIndex(of: rhs.status) ?? 0
             return lhsStatus < rhsStatus
         }
-    }
-}
-
-class MockMatchesViewModel: MatchesViewModel {
-    @Published var matches: [Match] = []
-    
-    func fetchMatches() {
-        print("Implement a mock on me!")
     }
 }
