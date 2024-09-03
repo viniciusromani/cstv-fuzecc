@@ -8,43 +8,35 @@
 import Foundation
 import Combine
 
-protocol MatchDetailsViewModel: ObservableObject {
-    var match: Match? { get set }
-    func fetchMatch(id: String)
-}
-
-class RemoteMatchDetailsViewModel: MatchDetailsViewModel {
-    @Published var match: Match?
+class MatchDetailsViewModel: Loadable {
+    @Published var state: LoadingState<Match> = .idle
     
-    private let id: String
+    private let id: String = ""
     private let service: MatchServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     
     init(id: String, service: MatchServiceProtocol) {
-        self.id = id
         self.service = service
     }
     
-    func fetchMatch(id: String) {
-        service.getMatch(id: id)
+    func load() {
+        guard self.id != "" else {
+            state = .failed(NSError(domain: "no id provided", code: 0))
+            return
+        }
+        
+        state = .loading
+        service.getMatch(id: self.id)
             .receive(on: DispatchQueue.main)
             .sink { result in
                 switch result {
-                case .failure(let error): print("Error \(error)")
+                case .failure(let error): self.state = .failed(error)
                 case .finished: break
                 }
             } receiveValue: { [weak self] match in
                 guard let strong = self else { return }
-                strong.match = match
+                strong.state = .loaded(match)
             }
             .store(in: &cancellables)
-    }
-}
-
-class MockMatchDetailsViewModel: MatchDetailsViewModel {
-    @Published var match: Match?
-    
-    func fetchMatch(id: String) {
-        print("Implement a mock on me!")
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Resolver
 
 protocol MatchServiceProtocol: AnyObject {
     var network: NetworkProtocol { get }
@@ -16,7 +17,7 @@ protocol MatchServiceProtocol: AnyObject {
 }
 
 class MatchService: MatchServiceProtocol {
-    let network: NetworkProtocol
+    @Injected var network: NetworkProtocol
     
     init(network: NetworkProtocol) {
         self.network = network

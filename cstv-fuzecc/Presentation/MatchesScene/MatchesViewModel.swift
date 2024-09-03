@@ -7,11 +7,12 @@
 
 import Foundation
 import Combine
+import Resolver
 
-class RemoteMatchesViewModel: Loadable {
+class MatchesViewModel: Loadable {
     @Published var state: LoadingState<[Match]> = .idle
     
-    private let service: MatchServiceProtocol
+    @Injected private var service: MatchServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     
     init(service: MatchServiceProtocol) {
@@ -46,7 +47,7 @@ class RemoteMatchesViewModel: Loadable {
     
     func sort(matches: [Match]) -> [Match] {
         let formatter = CachedDateFormatter.shared.matchScheduleFormatter()
-        let sortOrder = ["running", "not_started", "finished"]
+        let sortOrder = ["running", "not_started", "finished", "postponed", "canceled"]
         
         return matches.sorted { lhs, rhs in
             if lhs.status == rhs.status {

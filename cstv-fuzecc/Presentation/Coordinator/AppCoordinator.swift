@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Resolver
 
 class AppCoordinator: Coordinator {
     enum Pages: PagesProtocol {
@@ -19,16 +20,10 @@ class AppCoordinator: Coordinator {
     func build(page: Pages) -> some View {
         switch page {
         case .home:
-            // TODO: Improve with DI
-            let network = RemoteNetwork()
-            let service = MatchService(network: network)
-            let viewModel = RemoteMatchesViewModel(service: service)
+            let viewModel = MatchesViewModel(service: Resolver.resolve())
             MatchesView(viewModel: viewModel)
         case .details(let id):
-            // TODO: Improve with DI
-            let network = RemoteNetwork()
-            let service = MatchService(network: network)
-            let viewModel = RemoteMatchDetailsViewModel(id: id, service: service)
+            let viewModel = MatchDetailsViewModel(id: id, service: Resolver.resolve())
             MatchDetailsView(viewModel: viewModel)
         }
     }

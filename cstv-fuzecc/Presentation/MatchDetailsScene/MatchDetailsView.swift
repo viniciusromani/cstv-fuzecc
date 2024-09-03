@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct MatchDetailsView<ViewModel: MatchDetailsViewModel>: View {
+struct MatchDetailsView: View {
     @EnvironmentObject var coordinator: AppCoordinator
-    @ObservedObject var viewModel: ViewModel
+    @ObservedObject var viewModel: MatchDetailsViewModel
     
     var body: some View {
         Text("Hello, World!")
@@ -28,6 +28,6 @@ struct MatchDetailsView<ViewModel: MatchDetailsViewModel>: View {
     }
 }
 
-#Preview {
-    MatchDetailsView(viewModel: MockMatchDetailsViewModel())
-}
+//#Preview {
+//    MatchDetailsView()
+//}

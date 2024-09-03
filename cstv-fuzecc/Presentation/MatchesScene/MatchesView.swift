@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MatchesView: View {
     @EnvironmentObject var coordinator: AppCoordinator
-    @ObservedObject var viewModel: RemoteMatchesViewModel
+    @ObservedObject var viewModel: MatchesViewModel
     
     var body: some View {
         AsyncContentView(source: viewModel) { matches in
@@ -26,5 +26,5 @@ struct MatchesView: View {
 }
 
 //#Preview {
-//    MatchesView<MockMatchesViewModel>(viewModel: MockMatchesViewModel())
+//    MatchesView()
 //}
