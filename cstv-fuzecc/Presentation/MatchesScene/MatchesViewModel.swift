@@ -19,6 +19,18 @@ class MatchesViewModel: Loadable {
         self.service = service
     }
     
+    func refresh() async -> [Match] {
+        do {
+            let matches = try await service.getMatches().async()
+            let sorted = sort(matches: matches)
+            // view update
+            await MainActor.run { state = .loaded(sorted) }
+            return sorted
+        } catch {
+            return []
+        }
+    }
+    
     func load() {
         let formatter = CachedDateFormatter.shared.fetchMatchesFilterFormatter()
         let today = formatter.date(from: formatter.string(from: Date())) ?? Date()
@@ -40,7 +52,8 @@ class MatchesViewModel: Loadable {
                 }
             } receiveValue: { [weak self] matches in
                 guard let strong = self else { return }
-                strong.state = .loaded(strong.sort(matches: matches))
+                let sorted = strong.sort(matches: matches)
+                strong.state = .loaded(sorted)
             }
             .store(in: &cancellables)
     }

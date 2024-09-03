@@ -19,9 +19,10 @@ struct MatchesView: View {
                 }
             }
             .listStyle(.plain)
-            .refreshable { viewModel.load() }
+            .refreshable { _ = await viewModel.refresh() }
         }
         .navigationTitle("Partidas")
+        .onAppear { UIRefreshControl.appearance().tintColor = UIColor(Color.white) }
     }
 }
 
