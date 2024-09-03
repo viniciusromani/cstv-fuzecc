@@ -11,10 +11,13 @@ struct MatchesView<ViewModel: MatchesViewModel>: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        Text("Hello, World!")
-            .onAppear {
-                viewModel.fetchMatches()
-            }
+        List(viewModel.matches) { match in
+            MatchRowView(match: match)
+        }
+        .listStyle(.plain)
+        .onAppear {
+            viewModel.fetchMatches()
+        }
     }
 }
 

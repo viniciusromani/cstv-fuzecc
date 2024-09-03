@@ -15,6 +15,11 @@ struct Match: Codable, Identifiable {
     let league: League
     let serie: Serie
     
+    var formattedTime: String {
+        return "21:00"
+    }
+}
+extension Match {
     enum CodingKeys: String, CodingKey {
         case id
         case status
