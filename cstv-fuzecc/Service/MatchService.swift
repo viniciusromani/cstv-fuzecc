@@ -31,8 +31,10 @@ class MatchService: MatchServiceProtocol {
     
     func getMatches() -> AnyPublisher<[Match], Error> {
         var endpoint: Endpoint = .matches
-        endpoint.queryItems = [URLQueryItem(name: "filter[begin_at]", value: formatter.string(from: Date()))]
-//        endpoint.queryItems = [URLQueryItem(name: "filter[begin_at]", value: "2024-09-02")]
+        endpoint.queryItems = [
+            URLQueryItem(name: "filter[begin_at]", value: formatter.string(from: Date())),
+            URLQueryItem(name: "sort", value: "-begin_at")
+        ]
         return network.get(type: [Match].self, url: endpoint.url, headers: endpoint.headers)
     }
     
