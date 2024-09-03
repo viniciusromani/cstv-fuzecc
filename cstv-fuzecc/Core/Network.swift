@@ -25,19 +25,11 @@ class RemoteNetwork: NetworkProtocol {
         }
         
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = .formatted(CachedDateFormatter.shared.iso8601Formatter())
         
         return URLSession.shared.dataTaskPublisher(for: request)
             .map(\.data)
             .decode(type: T.self, decoder: decoder)
             .eraseToAnyPublisher()
-        
-//        return URLSession.shared.dataTaskPublisher(for: request)
-//            .tryMap { element in
-//                print("im here")
-//                return element.data
-//            }
-//            .decode(type: T.self, decoder: decoder)
-//            .eraseToAnyPublisher()
     }
 }

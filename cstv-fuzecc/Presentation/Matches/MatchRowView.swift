@@ -9,30 +9,39 @@ import SwiftUI
 
 struct MatchRowView: View {
     private let match: Match
-    private let formatter: DateFormatter
     
     init(match: Match) {
         self.match = match
-        let _formatter = DateFormatter()
-        _formatter.timeZone = TimeZone.current
-        _formatter.dateFormat = "HH:mm"
-        self.formatter = _formatter
     }
     
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Spacer()
-                Text(
-                    match.status == "running" ? "AGORA": "Hoje, \(formatter.string(from: match.scheduledAt))"
-                )
-                .padding(8)
-                .background(
-                    match.status == "running" ? Color("WarningColor"): .white.opacity(0.2)
-                )
-                .bold()
-                .font(.customFont(size: 8))
-                .clipShape(.rect(bottomLeadingRadius: 16))
+                switch match.status {
+                case "running":
+                    Text("AGORA")
+                        .padding(8)
+                        .background(Color("WarningColor"))
+                        .bold()
+                        .font(.customFont(size: 8))
+                        .clipShape(.rect(bottomLeadingRadius: 16))
+                case "not_started":
+                    Text("Hoje, \(CachedDateFormatter.shared.matchScheduleFormatter().string(from: match.scheduledAt))")
+                        .padding(8)
+                        .background(.white.opacity(0.2))
+                        .bold()
+                        .font(.customFont(size: 8))
+                        .clipShape(.rect(bottomLeadingRadius: 16))
+                case "finished":
+                    Text("FINALIZADO")
+                        .padding(8)
+                        .background(Color("SuccessColor"))
+                        .bold()
+                        .font(.customFont(size: 8))
+                        .clipShape(.rect(bottomLeadingRadius: 16))
+                default: Text("-")
+                }
             }
             HStack(spacing: 20) {
                 VStack(spacing: 10) {

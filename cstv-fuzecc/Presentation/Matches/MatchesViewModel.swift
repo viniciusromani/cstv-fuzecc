@@ -24,20 +24,43 @@ class RemoteMatchesViewModel: MatchesViewModel {
     }
     
     func fetchMatches() {
+        let formatter = CachedDateFormatter.shared.fetchMatchesFilterFormatter()
+        let today = formatter.date(from: formatter.string(from: Date())) ?? Date()
+        
         service.getMatches()
             .receive(on: DispatchQueue.main)
+            .map { matches in
+                matches.filter { match in
+                    let scheduled = formatter.date(from: formatter.string(from: match.scheduledAt)) ?? Date()
+                    return scheduled >= today
+                }
+            }
             .sink { result in
                 switch result {
                 case .failure(let error): print("Error \(error)")
                 case .finished: break
                 }
             } receiveValue: { [weak self] matches in
-                print("success")
-                
-                // 1028352
-                self?.matches = matches
+                guard let strong = self else { return }
+                strong.matches = strong.sort(matches: matches)
             }
             .store(in: &cancellables)
+    }
+    
+    func sort(matches: [Match]) -> [Match] {
+        let formatter = CachedDateFormatter.shared.matchScheduleFormatter()
+        
+        return matches.sorted { lhs, rhs in
+            if lhs.status == rhs.status {
+                let lhsDate = formatter.date(from: formatter.string(from: lhs.scheduledAt)) ?? Date()
+                let rhsDate = formatter.date(from: formatter.string(from: rhs.scheduledAt)) ?? Date()
+                return lhsDate < rhsDate
+            }
+            
+            let lhsStatus = ["running", "not_started", "finished"].firstIndex(of: lhs.status) ?? 0
+            let rhsStatus = ["running", "not_started", "finished"].firstIndex(of: rhs.status) ?? 0
+            return lhsStatus < rhsStatus
+        }
     }
 }
 
