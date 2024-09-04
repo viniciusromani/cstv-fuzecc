@@ -121,7 +121,6 @@ struct MatchRowView: View {
         .listRowInsets(EdgeInsets(top: 12, leading: 24, bottom: 12, trailing: 24))
         .listRowBackground(Color("BackgroundColor"))
         .listRowSeparator(.hidden)
-        .foregroundColor(Color("TextColor"))
         .background(Color("CardColor"))
         .cornerRadius(16)
     }

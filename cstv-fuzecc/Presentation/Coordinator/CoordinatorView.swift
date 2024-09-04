@@ -30,8 +30,10 @@ struct CoordinatorView: View {
                             Color("BackgroundColor").ignoresSafeArea()
                             coordinator.build(page: page)
                         }
+                        .foregroundStyle(Color("TextColor"))
                     }
             }
+            .foregroundStyle(Color("TextColor"))
         }.environmentObject(coordinator)
     }
 }
