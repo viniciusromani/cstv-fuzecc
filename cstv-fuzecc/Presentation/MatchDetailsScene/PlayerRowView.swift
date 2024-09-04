@@ -9,38 +9,56 @@ import SwiftUI
 
 struct PlayerRowView: View {
     private let alignment: Alignment
-    private let horizontalAligment: HorizontalAlignment
+    private let player: Player
     
-    init(alignment: Alignment) {
+    init(alignment: Alignment, player: Player) {
         self.alignment = alignment
-        self.horizontalAligment = alignment == .leading ? .leading: .trailing
+        self.player = player
     }
     
     var body: some View {
         ZStack {
             HStack {
                 if alignment == .leading {
-                    Image("ic-team-placeholder")
-                        .resizable()
-                        .scaledToFit().frame(width: 50, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    CachedAsyncImage(url: player.imageURL) { phase in
+                        if let image = phase.image {
+                            image.resizable().scaledToFit()
+                        } else if phase.error != nil {
+                            Image("ic-player-placeholder")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 50)
+                        } else {
+                            ProgressView().tint(.white)
+                        }
+                    }
+                    .frame(width: 50, height: 50)
                 }
                 
-                VStack(alignment: horizontalAligment) {
-                    Text("Nickname")
+                VStack(alignment: alignment == .leading ? .leading: .trailing) {
+                    Text(player.nickname)
                         .font(.customFont(size: 14))
                         .bold()
-                    Text("Nome Jogador")
+                    Text(player.name)
                         .font(.customFont(size: 12))
                         .foregroundStyle(Color("MutedColor"))
                 }
                 .frame(maxWidth: .infinity, alignment: alignment)
                 
                 if alignment == .trailing {
-                    Image("ic-team-placeholder")
-                        .resizable()
-                        .scaledToFit().frame(width: 50, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    CachedAsyncImage(url: player.imageURL) { phase in
+                        if let image = phase.image {
+                            image.resizable().scaledToFit()
+                        } else if phase.error != nil {
+                            Image("ic-player-placeholder")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 60)
+                        } else {
+                            ProgressView().tint(.white)
+                        }
+                    }
+                    .frame(width: 50, height: 50)
                 }
             }
             .background(Color("CardColor"))
@@ -52,19 +70,13 @@ struct PlayerRowView: View {
                     topTrailingRadius: alignment == .trailing ? 12: 0
                 ))
         }
-        .listRowInsets(
-            EdgeInsets(
-                top: 6,
-                leading: alignment == .leading ? 12: 0,
-                bottom: 6,
-                trailing: alignment == .trailing ? 12: 0
-            ))
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color("BackgroundColor"))
+        .padding([.top, .bottom], 6)
+        .padding(.leading, alignment == .leading ? 12: 0)
+        .padding(.trailing, alignment == .trailing ? 12: 0)
         .frame(maxWidth: .infinity)
     }
 }
 
-#Preview {
-    PlayerRowView(alignment: .leading)
-}
+//#Preview {
+//    PlayerRowView(alignment: .leading)
+//}

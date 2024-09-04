@@ -13,7 +13,6 @@ protocol MatchServiceProtocol: AnyObject {
     var network: NetworkProtocol { get }
     
     func getMatches() -> AnyPublisher<[Match], Error>
-    func getMatch(id: String) -> AnyPublisher<Match, Error>
 }
 
 class MatchService: MatchServiceProtocol {
@@ -32,10 +31,5 @@ class MatchService: MatchServiceProtocol {
             URLQueryItem(name: "sort", value: "begin_at")
         ]
         return network.get(type: [Match].self, url: endpoint.url, headers: endpoint.headers)
-    }
-    
-    func getMatch(id: String) -> AnyPublisher<Match, Error> {
-        let endpoint: Endpoint = .match(id: id)
-        return network.get(type: Match.self, url: endpoint.url, headers: endpoint.headers)
     }
 }

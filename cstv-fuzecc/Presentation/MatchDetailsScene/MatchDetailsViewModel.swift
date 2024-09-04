@@ -9,33 +9,38 @@ import Foundation
 import Combine
 
 class MatchDetailsViewModel: Loadable {
-    @Published var state: LoadingState<Match> = .idle
+    @Published var state: LoadingState<(team1: [Player], team2: [Player])> = .idle
     
-    private let id: String = ""
-    private let service: MatchServiceProtocol
+    let match: Match
+    private let service: PlayerServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     
-    init(id: String, service: MatchServiceProtocol) {
+    init(match: Match, service: PlayerServiceProtocol) {
+        self.match = match
         self.service = service
     }
     
     func load() {
-        guard self.id != "" else {
-            state = .failed(NSError(domain: "no id provided", code: 0))
+        guard let team1Id = match.opponents.first?.id, 
+                let team2Id = match.opponents.last?.id else {
+            print("team ids not provided")
             return
         }
         
         state = .loading
-        service.getMatch(id: self.id)
+        let team1Publisher = service.getPlayers(team: team1Id)
+        let team2Publisher = service.getPlayers(team: team2Id)
+        
+        Publishers.Zip(team1Publisher, team2Publisher)
             .receive(on: DispatchQueue.main)
-            .sink { result in
+            .sink { [weak self] result in
                 switch result {
-                case .failure(let error): self.state = .failed(error)
+                case .failure(let error): self?.state = .failed(error)
                 case .finished: break
                 }
-            } receiveValue: { [weak self] match in
+            } receiveValue: { [weak self] result in
                 guard let strong = self else { return }
-                strong.state = .loaded(match)
+                strong.state = .loaded((team1: result.0, team2: result.1))
             }
             .store(in: &cancellables)
     }

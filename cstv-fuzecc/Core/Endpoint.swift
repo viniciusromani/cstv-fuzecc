@@ -44,7 +44,7 @@ extension Endpoint {
         return Endpoint(path: "/matches")
     }
     
-    static func match(id: String) -> Self {
-        return Endpoint(path: "/matches/\(id)")
+    static var players: Self {
+        return Endpoint(path: "/players")
     }
 }

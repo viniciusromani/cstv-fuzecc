@@ -14,8 +14,8 @@ struct MatchesView: View {
     var body: some View {
         AsyncContentView(source: viewModel) { matches in
             List(matches) { match in
-                MatchRowView(match: match) { id in
-                    self.coordinator.navigateToDetails(id: id)
+                MatchRowView(match: match) {
+                    self.coordinator.navigateToDetails(match: match)
                 }
             }
             .listStyle(.plain)

@@ -23,5 +23,8 @@ extension Resolver: ResolverRegistering {
         Resolver.register { resolver in
             MatchService(network: resolver.resolve())
         }.implements(MatchServiceProtocol.self)
+        Resolver.register { resolver in
+            PlayerService(network: resolver.resolve())
+        }.implements(PlayerServiceProtocol.self)
     }
 }

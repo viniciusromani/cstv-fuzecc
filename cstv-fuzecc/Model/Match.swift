@@ -36,4 +36,12 @@ extension Match {
         self.serie = try container.decode(Serie.self, forKey: .serie)
     }
 }
-
+extension Match: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: Match, rhs: Match) -> Bool {
+        return lhs.id == rhs.id
+    }
+}

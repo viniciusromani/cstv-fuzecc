@@ -12,72 +12,89 @@ struct MatchDetailsView: View {
     @ObservedObject var viewModel: MatchDetailsViewModel
     
     var body: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 20) {
-                VStack(spacing: 10) {
-                    CachedAsyncImage(url: "https://cdn.pandascore.co/images/team/image/132857/229px_sinners_academy_allmode.png") { phase in
-                        if let image = phase.image {
-                            image.resizable().scaledToFit()
-                        } else if phase.error != nil {
-                            Image("ic-team-placeholder")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 60)
-                        } else {
-                            ProgressView().tint(.white)
-                        }
-                    }.frame(height: 60)
-
-                    Text("SINNERS Academy" ?? "-")
-                        .font(.customFont(size: 10))
-                        .multilineTextAlignment(.center)
+        ScrollView(.vertical) {
+            VStack(spacing: 20) {
+                HStack(spacing: 20) {
+                    VStack(spacing: 10) {
+                        CachedAsyncImage(url: viewModel.match.opponents.first?.imageURL) { phase in
+                            if let image = phase.image {
+                                image.resizable().scaledToFit()
+                            } else if phase.error != nil {
+                                Image("ic-team-placeholder")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 60)
+                            } else {
+                                ProgressView().tint(.white)
+                            }
+                        }.frame(height: 60)
+                        
+                        Text(viewModel.match.opponents.first?.name ?? "-")
+                            .font(.customFont(size: 10))
+                            .multilineTextAlignment(.center)
+                    }.frame(maxWidth: .infinity)
                     
-                }.frame(maxWidth: .infinity)
+                    Text("vs")
+                        .font(.customFont(size: 12))
+                        .opacity(0.5)
+    
+                    VStack(spacing: 10) {
+                        CachedAsyncImage(url: viewModel.match.opponents.last?.imageURL) { phase in
+                            if let image = phase.image {
+                                image.resizable().scaledToFit()
+                            } else if phase.error != nil {
+                                Image("ic-team-placeholder")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 60)
+                            } else {
+                                ProgressView().tint(.white)
+                            }
+                        }.frame(height: 60)
+                        
+                        Text(viewModel.match.opponents.last?.name ?? "-")
+                            .font(.customFont(size: 10))
+                            .multilineTextAlignment(.center)
+                    }.frame(maxWidth: .infinity)
+                }
                 
-                Text("vs")
-                    .font(.customFont(size: 12))
-                    .opacity(0.5)
                 
-                VStack(spacing: 10) {
-                    CachedAsyncImage(url: "https://cdn.pandascore.co/images/team/image/129356/1092px_dynamo_eclot_allmode.png") { phase in
-                        if let image = phase.image {
-                            image.resizable().scaledToFit()
-                        } else if phase.error != nil {
-                            Image("ic-team-placeholder")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 60)
-                        } else {
-                            ProgressView().tint(.white)
+                switch viewModel.match.status {
+                case "running":
+                    Text("AGORA")
+                        .font(.customFont(size: 12))
+                        .bold()
+                case "not_started":
+                    Text("Hoje, \(CachedDateFormatter.shared.matchScheduleFormatter().string(from: viewModel.match.scheduledAt))")
+                        .font(.customFont(size: 12))
+                        .bold()
+                case "finished":
+                    Text("FINALIZADO")
+                        .font(.customFont(size: 12))
+                        .bold()
+                default: Text("-")
+                }
+                
+                AsyncContentView(source: viewModel) { result in
+                    HStack(alignment: .top, spacing: 0) {
+                        VStack(spacing: 0) {
+                            ForEach(result.team1) { player in
+                                PlayerRowView(alignment: .trailing, player: player)
+                            }
                         }
-                    }.frame(height: 60)
-
-                    Text("Dynamo Eclot" ?? "-")
-                        .font(.customFont(size: 10))
-                        .multilineTextAlignment(.center)
-                    
-                }.frame(maxWidth: .infinity)
-            }
-            .padding(12)
-            
-            Text("Hoje, 21:00")
-                .font(.customFont(size: 12))
-                .bold()
-            
-            HStack(spacing: 0) {
-                List {
-                    PlayerRowView(alignment: .trailing)
+                        
+                        VStack(spacing: 0) {
+                            ForEach(result.team2) { player in
+                                PlayerRowView(alignment: .leading, player: player)
+                            }
+                        }
+                    }
                 }
-                .listStyle(.plain)
-                
-                List {
-                    PlayerRowView(alignment: .leading)
-                }
-                .listStyle(.plain)
             }
+            .frame(maxWidth: .infinity)
         }
         .padding(.top, 24)
-        .navigationTitle("United21 Season 19 2024")
+        .navigationTitle("\(viewModel.match.league.name) \(viewModel.match.serie.name)")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
         .toolbar {
@@ -87,7 +104,6 @@ struct MatchDetailsView: View {
                 } label: {
                     Image("ic-arrow-left")
                 }
-
             }
         }
     }

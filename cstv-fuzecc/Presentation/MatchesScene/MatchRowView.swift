@@ -9,16 +9,16 @@ import SwiftUI
 
 struct MatchRowView: View {
     private let match: Match
-    private let action: (_ id: String) -> Void
+    private let action: () -> Void
     
-    init(match: Match, action: @escaping (_ id: String) -> Void) {
+    init(match: Match, action: @escaping () -> Void) {
         self.match = match
         self.action = action
     }
     
     var body: some View {
         Button {
-            self.action(match.id)
+            self.action()
         } label: {
             VStack(spacing: 0) {
                 HStack {

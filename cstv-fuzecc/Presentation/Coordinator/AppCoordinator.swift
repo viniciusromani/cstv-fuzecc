@@ -12,7 +12,18 @@ import Resolver
 class AppCoordinator: Coordinator {
     enum Pages: PagesProtocol {
         case home
-        case details(id: String)
+        case details(Match)
+        
+        func hash(into hasher: inout Hasher) {
+            switch self {
+            case .home: hasher.combine(0)
+            case .details(let match): hasher.combine(match)
+            }
+        }
+        
+        static func == (lhs: AppCoordinator.Pages, rhs: AppCoordinator.Pages) -> Bool {
+            return lhs.hashValue == rhs.hashValue
+        }
     }
     @Published var path: NavigationPath = NavigationPath()
     
@@ -22,13 +33,13 @@ class AppCoordinator: Coordinator {
         case .home:
             let viewModel = MatchesViewModel(service: Resolver.resolve())
             MatchesView(viewModel: viewModel)
-        case .details(let id):
-            let viewModel = MatchDetailsViewModel(id: id, service: Resolver.resolve())
+        case .details(let match):
+            let viewModel = MatchDetailsViewModel(match: match, service: Resolver.resolve())
             MatchDetailsView(viewModel: viewModel)
         }
     }
     
-    func navigateToDetails(id: String) {
-        self.push(page: .details(id: id))
+    func navigateToDetails(match: Match) {
+        self.push(page: .details(match))
     }
 }
