@@ -12,16 +12,12 @@ import Resolver
 class MatchesViewModel: Loadable {
     @Published var state: LoadingState<[Match]> = .idle
     
-    @Injected private var service: MatchServiceProtocol
+    @Injected private var repository: MatchRepository
     private var cancellables = Set<AnyCancellable>()
-    
-    init(service: MatchServiceProtocol) {
-        self.service = service
-    }
     
     func refresh() async -> [Match] {
         do {
-            let matches = try await service.getMatches().async()
+            let matches = try await repository.getMatches(forceRemote: true).async()
             let sorted = sort(matches: matches)
             // view update
             await MainActor.run { state = .loaded(sorted) }
@@ -36,7 +32,7 @@ class MatchesViewModel: Loadable {
         let today = formatter.date(from: formatter.string(from: Date())) ?? Date()
         
         state = .loading
-        service.getMatches()
+        repository.getMatches()
             .receive(on: DispatchQueue.main)
             .map { matches in
                 matches.filter { match in

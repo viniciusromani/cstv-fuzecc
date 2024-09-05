@@ -16,15 +16,31 @@ extension Resolver: ResolverRegistering {
          (or even clean layer; Service + Presentation - didnt do Domain for the sake of simplicity)
          */
         
+        // core
         Resolver.register {
             RemoteNetwork()
         }.implements(NetworkProtocol.self)
+        Resolver.register {
+            Cache.shared as Cache
+        }
         
-        Resolver.register { resolver in
-            MatchService(network: resolver.resolve())
-        }.implements(MatchServiceProtocol.self)
-        Resolver.register { resolver in
-            PlayerService(network: resolver.resolve())
-        }.implements(PlayerServiceProtocol.self)
+        // datasource
+        Resolver.register {
+            RemoteMatchDataSource()
+        }.implements(MatchDataSource.self)
+        Resolver.register {
+            CacheMatchDataSource()
+        }.implements(MatchDataSource.self)
+        Resolver.register {
+            RemotePlayerDataSource()
+        }.implements(PlayerDataSource.self)
+        
+        // repository
+        Resolver.register {
+            MatchRepository()
+        }
+        Resolver.register {
+            PlayerRepository()
+        }
     }
 }

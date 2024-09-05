@@ -1,26 +1,20 @@
 //
-//  MatchService.swift
+//  PlayerDataSource.swift
 //  cstv-fuzecc
 //
-//  Created by Vinicius Romani on 02/09/24.
+//  Created by Vinicius Romani on 04/09/24.
 //
 
 import Foundation
-import Combine
 import Resolver
+import Combine
 
-protocol PlayerServiceProtocol: AnyObject {
-    var network: NetworkProtocol { get }
-    
+protocol PlayerDataSource: AnyObject {
     func getPlayers(team: String) -> AnyPublisher<[Player], Error>
 }
 
-class PlayerService: PlayerServiceProtocol {
-    @Injected var network: NetworkProtocol
-    
-    init(network: NetworkProtocol) {
-        self.network = network
-    }
+class RemotePlayerDataSource: PlayerDataSource {
+    @Injected private var network: NetworkProtocol
     
     func getPlayers(team: String) -> AnyPublisher<[Player], Error> {
         var endpoint: Endpoint = .players

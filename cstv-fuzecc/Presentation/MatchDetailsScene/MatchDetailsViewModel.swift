@@ -7,17 +7,17 @@
 
 import Foundation
 import Combine
+import Resolver
 
 class MatchDetailsViewModel: Loadable {
     @Published var state: LoadingState<(team1: [Player], team2: [Player])> = .idle
     
     let match: Match
-    private let service: PlayerServiceProtocol
+    @Injected private var repository: PlayerRepository
     private var cancellables = Set<AnyCancellable>()
     
-    init(match: Match, service: PlayerServiceProtocol) {
+    init(match: Match) {
         self.match = match
-        self.service = service
     }
     
     func load() {
@@ -28,8 +28,8 @@ class MatchDetailsViewModel: Loadable {
         }
         
         state = .loading
-        let team1Publisher = service.getPlayers(team: team1Id)
-        let team2Publisher = service.getPlayers(team: team2Id)
+        let team1Publisher = repository.getPlayers(team: team1Id)
+        let team2Publisher = repository.getPlayers(team: team2Id)
         
         Publishers.Zip(team1Publisher, team2Publisher)
             .receive(on: DispatchQueue.main)

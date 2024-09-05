@@ -27,7 +27,7 @@ struct CachedAsyncImage<Content>: View where Content: View {
     
     var body: some View {
         if let url = self.url {
-            if let cached = Cache[url] {
+            if let cached = ImageCache[url] {
                 content(.success(cached))
             } else {
                 AsyncImage(
@@ -43,18 +43,18 @@ struct CachedAsyncImage<Content>: View where Content: View {
     
     func cacheAndRender(phase: AsyncImagePhase) -> some View {
         if case .success(let image) = phase, let url = self.url {
-            Cache[url] = image
+            ImageCache[url] = image
         }
         return content(phase)
     }
 }
 
-fileprivate class Cache {
+fileprivate class ImageCache {
     static private var stored: [URL: Image] = [:]
     
     static subscript(url: URL) -> Image? {
-        get { Cache.stored[url] }
-        set { Cache.stored[url] = newValue }
+        get { ImageCache.stored[url] }
+        set { ImageCache.stored[url] = newValue }
     }
 }
 

@@ -31,10 +31,10 @@ class AppCoordinator: Coordinator {
     func build(page: Pages) -> some View {
         switch page {
         case .home:
-            let viewModel = MatchesViewModel(service: Resolver.resolve())
+            let viewModel = MatchesViewModel()
             MatchesView(viewModel: viewModel)
         case .details(let match):
-            let viewModel = MatchDetailsViewModel(match: match, service: Resolver.resolve())
+            let viewModel = MatchDetailsViewModel(match: match)
             MatchDetailsView(viewModel: viewModel)
         }
     }
