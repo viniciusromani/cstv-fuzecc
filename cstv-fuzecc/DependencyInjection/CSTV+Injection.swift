@@ -21,8 +21,8 @@ extension Resolver: ResolverRegistering {
             RemoteNetwork()
         }.implements(NetworkProtocol.self)
         Resolver.register {
-            Cache.shared as Cache
-        }
+            InMemoryCache.shared
+        }.implements(CacheProtocol.self)
         
         // datasource
         Resolver.register {

@@ -14,7 +14,7 @@ import Combine
  but it is still here to follow arch.
  */
 class PlayerRepository {
-    @Injected private var remoteDataSource: RemotePlayerDataSource
+    @Injected private var remoteDataSource: PlayerDataSource
     
     func getPlayers(team: String) -> AnyPublisher<[Player], Error> {
         remoteDataSource.getPlayers(team: team)

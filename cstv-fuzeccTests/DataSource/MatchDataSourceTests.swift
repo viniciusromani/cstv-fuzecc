@@ -12,6 +12,7 @@ import Combine
 
 final class MatchDataSourceTests: XCTestCase {
     private var network: MockNetwork<[Match]>!
+    private var cache: MockCache!
 
     override func setUpWithError() throws {
         Resolver.register {
@@ -19,9 +20,15 @@ final class MatchDataSourceTests: XCTestCase {
             self.network = mock
             return mock
         }.implements(NetworkProtocol.self)
+        
+        Resolver.register {
+            let mock = MockCache()
+            self.cache = mock
+            return mock
+        }.implements(CacheProtocol.self)
     }
     
-    func testGetMatchesSuccess() throws {
+    func testGetMatchesFromRemoteSuccess() throws {
         let dataSource = RemoteMatchDataSource()
         let expected = [Match.mock(), Match.mock()]
         let expectation = expectation(description: "expect datasource to publish right values")
@@ -29,11 +36,9 @@ final class MatchDataSourceTests: XCTestCase {
         let publisher = dataSource
             .getMatches()
             .sink { _ in
-                
             } receiveValue: { matches in
-                if matches == expected {
-                    expectation.fulfill()
-                }
+                expectation.fulfill()
+                XCTAssert(matches == expected)
             }
         
         network.send(value: expected)
@@ -41,7 +46,7 @@ final class MatchDataSourceTests: XCTestCase {
         publisher.cancel()
     }
     
-    func testGetMatchesError() throws {
+    func testGetMatchesFromRemoteError() throws {
         let dataSource = RemoteMatchDataSource()
         let expected = URLError.Code.resourceUnavailable
         let expectation = expectation(description: "expect datasource to publish error")
@@ -50,13 +55,51 @@ final class MatchDataSourceTests: XCTestCase {
             .getMatches()
             .sink { result in
                 if case .failure(let error) = result {
-                    if (error as? URLError)?.code == expected {
-                        expectation.fulfill()
-                    }
+                    expectation.fulfill()
+                    XCTAssert((error as? URLError)?.code == expected)
                 }
             } receiveValue: { _ in }
         
         network.send(error: URLError(expected))
+        waitForExpectations(timeout: 2)
+        publisher.cancel()
+    }
+    
+    func testGetMatchesFromCacheNotEmpty() throws {
+        let dataSource = CacheMatchDataSource()
+        let cacheKey = CachedDateFormatter.shared.fetchMatchesFilterFormatter().string(from: Date())
+        let expected = [Match.mock(), Match.mock()]
+        let expectation = expectation(description: "expect datasource to publish right values")
+        
+        self.cache.insert(expected, forKey: cacheKey)
+        
+        let publisher = dataSource
+            .getMatches()
+            .sink { _ in
+                expectation.fulfill()
+            } receiveValue: { matches in
+                XCTAssert(matches == expected)
+            }
+        
+        waitForExpectations(timeout: 2)
+        publisher.cancel()
+    }
+    
+    func testGetMatchesFromCacheEmpty() throws {
+        let dataSource = CacheMatchDataSource()
+        let cacheKey = CachedDateFormatter.shared.fetchMatchesFilterFormatter().string(from: Date())
+        let expected: [Match] = []
+        let expectation = expectation(description: "expect datasource to publish right values")
+        
+        let publisher = dataSource
+            .getMatches()
+            .sink { _ in
+                expectation.fulfill()
+            } receiveValue: { matches in
+                print("matches \(matches)")
+                XCTAssert(matches == expected)
+            }
+        
         waitForExpectations(timeout: 2)
         publisher.cancel()
     }

@@ -7,13 +7,18 @@
 
 import XCTest
 import Combine
+import Resolver
 @testable import cstv_fuzecc
 
 final class MatchesViewModelTests: XCTestCase {
+    private var repository: MockMatchRepository<[Match]>!
+    
     override func setUpWithError() throws {
-//        Resolver.register {
-//            GetAllGuideShopsRepositoryMock(withSuccess: true)
-//        }.implements(GetAllGuideShopsRepository.self)
+        Resolver.register {
+            let mock = MockMatchRepository<[Match]>()
+            self.repository = mock
+            return mock as MatchRepository
+        }
     }
     
     override func tearDownWithError() throws {
@@ -21,41 +26,48 @@ final class MatchesViewModelTests: XCTestCase {
     }
     
     func testLoadSuccess() throws {
-        let fetchMatches = PassthroughSubject<[Match], Error>()
+        let viewModel = MatchesViewModel()
+        let expected = [Match.mock(), Match.mock()]
+        let expectation = expectation(description: "expect viewModel to load right values")
         
+        let publisher = viewModel.$state.sink(receiveValue: { state in
+            if case .loaded(let matches) = state {
+                if matches == expected {
+                    expectation.fulfill()
+                }
+            }
+        })
         
-        
-        let repository = MatchRepository()
+        viewModel.load()
+        repository.send(value: expected)
+        waitForExpectations(timeout: 2)
+        publisher.cancel()
     }
     
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testLoadError() throws {
+        let viewModel = MatchesViewModel()
+        let expected = URLError.Code.resourceUnavailable
+        let expectation = expectation(description: "expect viewModel to publish error")
+        
+        let publisher = viewModel.$state.sink(receiveValue: { state in
+            if case .failed(let error) = state {
+                if (error as? URLError)?.code == expected {
+                    expectation.fulfill()
+                }
+            }
+        })
+        
+        viewModel.load()
+        repository.send(error: URLError(expected))
+        waitForExpectations(timeout: 2)
+        publisher.cancel()
     }
     
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testSort() throws {
+        let viewModel = MatchesViewModel()
+        let expected = Match.mockSorted()
+        let result = viewModel.sort(matches: Match.shuffled())
+        
+        XCTAssert(result == expected)
     }
 }
-
-//class MockMatchesDataSource: MatchDataSource {
-//    func getMatches() -> AnyPublisher<[cstv_fuzecc.Match], Error> {
-//        
-//    }
-//}
-
-
-//class MockDataFetcher: DataFetcher {
-//    func fetchData() -> AnyPublisher<DataType, Error> {
-//        let data = DataType(id: 1, userId: 1, title: "Mock Title", body: "Mock Body")
-//        return Just(data)
-//            .setFailureType(to: Error.self)
-//            .eraseToAnyPublisher()
-//    }
-//}

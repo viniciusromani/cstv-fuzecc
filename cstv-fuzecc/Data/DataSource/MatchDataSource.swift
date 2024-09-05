@@ -29,7 +29,7 @@ class RemoteMatchDataSource: MatchDataSource {
 }
 
 class CacheMatchDataSource: MatchDataSource {
-    @Injected private var cache: Cache
+    @Injected private var cache: CacheProtocol
     private let kMatches = CachedDateFormatter.shared.fetchMatchesFilterFormatter().string(from: Date())
     
     func getMatches() -> AnyPublisher<[Match], Error> {

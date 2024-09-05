@@ -7,10 +7,18 @@
 
 import Foundation
 
-final class Cache {
-    private var wrapped = [String: Any]()
+protocol CacheProtocol: AnyObject {
+    var wrapped: [String: Any] { get set }
     
-    static let shared = Cache()
+    func insert(_ value: Any, forKey key: String)
+    func value(forKey key: String) -> Any?
+    func removeValue(forKey key: String)
+}
+
+final class InMemoryCache: CacheProtocol {
+    internal var wrapped = [String: Any]()
+    
+    static let shared = InMemoryCache()
     private init() { }
     
     func insert(_ value: Any, forKey key: String) {

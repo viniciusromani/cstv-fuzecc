@@ -1,5 +1,5 @@
 //
-//  MockNetwork.swift
+//  MockMatchRepository.swift
 //  cstv-fuzeccTests
 //
 //  Created by Vinicius Romani on 05/09/24.
@@ -9,15 +9,15 @@ import Foundation
 import Combine
 @testable import cstv_fuzecc
 
-class MockNetwork<T: Decodable>: NetworkProtocol {
+class MockMatchRepository<T: Decodable>: MatchRepository {
     private let subject: PassthroughSubject<T, Error>
     
-    init() {
+    override init() {
         self.subject = PassthroughSubject<T, Error>()
     }
     
-    func get<A>(type: A.Type, url: URL, headers: Headers) -> AnyPublisher<A, Error> where A : Decodable {
-        return self.subject.eraseToAnyPublisher() as! AnyPublisher<A, Error>
+    override func getMatches(forceRemote: Bool = false) -> AnyPublisher<[Match], Error> {
+        return self.subject.eraseToAnyPublisher() as! AnyPublisher<[Match], Error>
     }
     
     func send(value: T) {

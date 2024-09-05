@@ -31,7 +31,7 @@ class MatchRepository {
                             return Just(matches)
                                 .setFailureType(to: Error.self)
                                 .eraseToAnyPublisher()
-                    }.eraseToAnyPublisher()
+                        }.eraseToAnyPublisher()
                 }
             }
             .eraseToAnyPublisher()

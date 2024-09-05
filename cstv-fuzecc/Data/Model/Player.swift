@@ -15,6 +15,16 @@ struct Player: Codable, Identifiable {
     private let last: String?
     let nickname: String
     let imageURL: String?
+    
+    init(id: String, active: Bool, name: String, first: String?, last: String?, nickname: String, imageURL: String?) {
+        self.id = id
+        self.active = active
+        self.name = name
+        self.first = first
+        self.last = last
+        self.nickname = nickname
+        self.imageURL = imageURL
+    }
 }
 extension Player {
     enum CodingKeys: String, CodingKey {

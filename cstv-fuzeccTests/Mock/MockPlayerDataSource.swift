@@ -1,5 +1,5 @@
 //
-//  MockNetwork.swift
+//  MockPlayerDataSource.swift
 //  cstv-fuzeccTests
 //
 //  Created by Vinicius Romani on 05/09/24.
@@ -9,15 +9,15 @@ import Foundation
 import Combine
 @testable import cstv_fuzecc
 
-class MockNetwork<T: Decodable>: NetworkProtocol {
+class MockRemotePlayerDataSource<T: Decodable>: PlayerDataSource {
     private let subject: PassthroughSubject<T, Error>
     
     init() {
         self.subject = PassthroughSubject<T, Error>()
     }
     
-    func get<A>(type: A.Type, url: URL, headers: Headers) -> AnyPublisher<A, Error> where A : Decodable {
-        return self.subject.eraseToAnyPublisher() as! AnyPublisher<A, Error>
+    func getPlayers(team: String) -> AnyPublisher<[Player], Error> {
+        return self.subject.eraseToAnyPublisher() as! AnyPublisher<[Player], Error>
     }
     
     func send(value: T) {
