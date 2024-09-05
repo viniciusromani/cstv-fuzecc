@@ -13,7 +13,8 @@ struct MatchesView: View {
     
     var body: some View {
         AsyncContentView(source: viewModel) { matches in
-            List(matches) { match in
+            if matches.count <= 0 { let _ = print("estou aqui") }
+            List(matches, id: \.id) { match in
                 MatchRowView(match: match) {
                     self.coordinator.navigateToDetails(match: match)
                 }

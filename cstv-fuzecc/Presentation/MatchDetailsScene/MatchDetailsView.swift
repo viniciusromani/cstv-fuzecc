@@ -11,53 +11,17 @@ struct MatchDetailsView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @ObservedObject var viewModel: MatchDetailsViewModel
     
+    var emptyList: some View {
+        Text("Sem jogadores cadastrados\n=(")
+            .multilineTextAlignment(.center)
+            .font(.customFont(size: 12))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 20) {
-                HStack(spacing: 20) {
-                    VStack(spacing: 10) {
-                        CachedAsyncImage(url: viewModel.match.opponents.first?.imageURL) { phase in
-                            if let image = phase.image {
-                                image.resizable().scaledToFit()
-                            } else if phase.error != nil {
-                                Image("ic-team-placeholder")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 60)
-                            } else {
-                                ProgressView().tint(.white)
-                            }
-                        }.frame(height: 60)
-                        
-                        Text(viewModel.match.opponents.first?.name ?? "-")
-                            .font(.customFont(size: 10))
-                            .multilineTextAlignment(.center)
-                    }.frame(maxWidth: .infinity)
-                    
-                    Text("vs")
-                        .font(.customFont(size: 12))
-                        .opacity(0.5)
-    
-                    VStack(spacing: 10) {
-                        CachedAsyncImage(url: viewModel.match.opponents.last?.imageURL) { phase in
-                            if let image = phase.image {
-                                image.resizable().scaledToFit()
-                            } else if phase.error != nil {
-                                Image("ic-team-placeholder")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 60)
-                            } else {
-                                ProgressView().tint(.white)
-                            }
-                        }.frame(height: 60)
-                        
-                        Text(viewModel.match.opponents.last?.name ?? "-")
-                            .font(.customFont(size: 10))
-                            .multilineTextAlignment(.center)
-                    }.frame(maxWidth: .infinity)
-                }
-                
+                TeamsContainerView(match: viewModel.match)
                 
                 switch viewModel.match.status {
                 case "running":
@@ -78,14 +42,22 @@ struct MatchDetailsView: View {
                 AsyncContentView(source: viewModel) { result in
                     HStack(alignment: .top, spacing: 0) {
                         VStack(spacing: 0) {
-                            ForEach(result.team1) { player in
-                                PlayerRowView(alignment: .trailing, player: player)
+                            if result.team1.count == 0 {
+                                emptyList
+                            } else {
+                                ForEach(result.team1) { player in
+                                    PlayerRowView(alignment: .trailing, player: player)
+                                }
                             }
                         }
                         
                         VStack(spacing: 0) {
-                            ForEach(result.team2) { player in
-                                PlayerRowView(alignment: .leading, player: player)
+                            if result.team2.count == 0 {
+                                emptyList
+                            } else {
+                                ForEach(result.team2) { player in
+                                    PlayerRowView(alignment: .leading, player: player)
+                                }
                             }
                         }
                     }
