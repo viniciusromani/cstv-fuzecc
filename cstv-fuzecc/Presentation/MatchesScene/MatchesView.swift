@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
+import Resolver
 
 struct MatchesView: View {
     @EnvironmentObject var coordinator: AppCoordinator
-    @ObservedObject var viewModel: MatchesViewModel
+    @InjectedObject var viewModel: MatchesViewModel
     
     var body: some View {
         AsyncContentView(source: viewModel) { matches in
-            if matches.count <= 0 { let _ = print("estou aqui") }
+            let _ = print("estou aqui \(matches.count)")
             List(matches, id: \.id) { match in
                 MatchRowView(match: match) {
                     self.coordinator.navigateToDetails(match: match)
@@ -27,6 +28,6 @@ struct MatchesView: View {
     }
 }
 
-//#Preview {
-//    MatchesView()
-//}
+#Preview {
+    MatchesView()
+}

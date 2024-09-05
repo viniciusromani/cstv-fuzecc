@@ -42,5 +42,21 @@ extension Resolver: ResolverRegistering {
         Resolver.register {
             PlayerRepository()
         }
+        
+        // viewModel
+        Resolver.register {
+            MatchesViewModel()
+        }.scope(.shared)
+        Resolver.register { (_, args) in
+            MatchDetailsViewModel(match: args())
+        }
+        
+        // view
+        Resolver.register {
+            MatchesView()
+        }
+        Resolver.register {
+            MatchDetailsView(viewModel: Resolver.resolve())
+        }
     }
 }

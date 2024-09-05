@@ -30,11 +30,9 @@ class AppCoordinator: Coordinator {
     @ViewBuilder
     func build(page: Pages) -> some View {
         switch page {
-        case .home:
-            let viewModel = MatchesViewModel()
-            MatchesView(viewModel: viewModel)
+        case .home: MatchesView()
         case .details(let match):
-            let viewModel = MatchDetailsViewModel(match: match)
+            let viewModel: MatchDetailsViewModel = Resolver.resolve(args: match)
             MatchDetailsView(viewModel: viewModel)
         }
     }
