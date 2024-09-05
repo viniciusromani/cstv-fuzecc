@@ -1,5 +1,5 @@
 //
-//  League.swift
+//  Serie.swift
 //  cstv-fuzecc
 //
 //  Created by Vinicius Romani on 02/09/24.
