@@ -14,7 +14,6 @@ struct MatchesView: View {
     
     var body: some View {
         AsyncContentView(source: viewModel) { matches in
-            let _ = print("estou aqui \(matches.count)")
             List(matches, id: \.id) { match in
                 MatchRowView(match: match) {
                     self.coordinator.navigateToDetails(match: match)
