@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 class MockRemotePlayerDataSource<T: Decodable>: PlayerDataSource {
     private let subject: PassthroughSubject<T, Error>

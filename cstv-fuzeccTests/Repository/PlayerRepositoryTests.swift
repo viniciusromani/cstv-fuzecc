@@ -8,7 +8,7 @@
 import XCTest
 import Resolver
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 final class PlayerRepositorySourceTests: XCTestCase {
     private var dataSource: MockRemotePlayerDataSource<[Player]>!
@@ -45,7 +45,7 @@ final class PlayerRepositorySourceTests: XCTestCase {
         let expected = URLError.Code.resourceUnavailable
         let expectation = expectation(description: "expect repository to publish error")
         
-        let publisher = dataSource
+        let publisher = repository
             .getPlayers(team: "")
             .sink { result in
                 if case .failure(let error) = result {

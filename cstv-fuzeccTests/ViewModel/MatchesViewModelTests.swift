@@ -8,7 +8,7 @@
 import XCTest
 import Combine
 import Resolver
-@testable import cstv_fuzecc
+@testable import CSTV
 
 final class MatchesViewModelTests: XCTestCase {
     private var repository: MockMatchRepository<[Match]>!
@@ -32,9 +32,30 @@ final class MatchesViewModelTests: XCTestCase {
         
         let publisher = viewModel.$state.sink(receiveValue: { state in
             if case .loaded(let matches) = state {
-                if matches == expected {
-                    expectation.fulfill()
-                }
+                print("im insde load success")
+                print("matches \(matches)")
+                print("matches \(expected)")
+                expectation.fulfill()
+                XCTAssert(matches.allSatisfy(expected.contains))
+            }
+        })
+        
+        viewModel.load()
+        repository.send(value: expected)
+        waitForExpectations(timeout: 2)
+        publisher.cancel()
+    }
+    
+    func testLoadRemovingNotTodayMatches() throws {
+        let viewModel = MatchesViewModel()
+        let yesterdayMatch = Match.mockYesterday()
+        let expected = [Match.mock(), yesterdayMatch]
+        let expectation = expectation(description: "expect viewModel to load right values")
+        
+        let publisher = viewModel.$state.sink(receiveValue: { state in
+            if case .loaded(let matches) = state {
+                expectation.fulfill()
+                XCTAssert(!matches.contains(yesterdayMatch))
             }
         })
         
@@ -51,9 +72,8 @@ final class MatchesViewModelTests: XCTestCase {
         
         let publisher = viewModel.$state.sink(receiveValue: { state in
             if case .failed(let error) = state {
-                if (error as? URLError)?.code == expected {
-                    expectation.fulfill()
-                }
+                expectation.fulfill()
+                XCTAssert((error as? URLError)?.code == expected)
             }
         })
         

@@ -8,7 +8,7 @@
 import XCTest
 import Resolver
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 final class PlayerDataSourceTests: XCTestCase {
     private var network: MockNetwork<[Player]>!

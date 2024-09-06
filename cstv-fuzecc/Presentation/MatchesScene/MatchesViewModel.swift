@@ -42,8 +42,7 @@ class MatchesViewModel: Loadable {
             }
             .sink { result in
                 switch result {
-                case .failure(let error): 
-                    self.state = .failed(error)
+                case .failure(let error): self.state = .failed(error)
                 case .finished: break
                 }
             } receiveValue: { [weak self] matches in

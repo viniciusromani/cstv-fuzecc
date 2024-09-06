@@ -8,7 +8,7 @@
 import XCTest
 import Resolver
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 final class MatchDataSourceTests: XCTestCase {
     private var network: MockNetwork<[Match]>!
@@ -87,7 +87,6 @@ final class MatchDataSourceTests: XCTestCase {
     
     func testGetMatchesFromCacheEmpty() throws {
         let dataSource = CacheMatchDataSource()
-        let cacheKey = CachedDateFormatter.shared.fetchMatchesFilterFormatter().string(from: Date())
         let expected: [Match] = []
         let expectation = expectation(description: "expect datasource to publish right values")
         
@@ -96,7 +95,6 @@ final class MatchDataSourceTests: XCTestCase {
             .sink { _ in
                 expectation.fulfill()
             } receiveValue: { matches in
-                print("matches \(matches)")
                 XCTAssert(matches == expected)
             }
         

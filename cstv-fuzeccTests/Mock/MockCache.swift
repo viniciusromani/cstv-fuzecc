@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 class MockCache: CacheProtocol {
     var wrapped = [String: Any]()

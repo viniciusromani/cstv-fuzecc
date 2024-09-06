@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 class MockPlayerRepository<T: Decodable>: PlayerRepository {
     private let subject: PassthroughSubject<T, Error>

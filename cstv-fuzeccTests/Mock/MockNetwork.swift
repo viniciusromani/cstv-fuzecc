@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 class MockNetwork<T: Decodable>: NetworkProtocol {
     private let subject: PassthroughSubject<T, Error>

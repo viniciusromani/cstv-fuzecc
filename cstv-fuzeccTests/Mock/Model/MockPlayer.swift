@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@testable import cstv_fuzecc
+@testable import CSTV
 
 extension Player {
     static func mock() -> Player {

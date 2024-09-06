@@ -8,7 +8,7 @@
 import XCTest
 import Combine
 import Resolver
-@testable import cstv_fuzecc
+@testable import CSTV
 
 
 final class MatchDetailsViewModelTests: XCTestCase {
@@ -25,22 +25,6 @@ final class MatchDetailsViewModelTests: XCTestCase {
     func testLoadSuccess() throws {
         // needs to be implemented
         XCTAssert(true)
-//        let viewModel = MatchDetailsViewModel(match: Match.mock())
-//        let expected = (team1: [Player.mock(), Player.mock()], team2: [Player.mock(), Player.mock()])
-//        let expectation = expectation(description: "expect viewModel to load right values")
-//        
-//        let publisher = viewModel.$state.sink(receiveValue: { state in
-//            if case .loaded(let players) = state {
-//                if players == expected {
-//                    expectation.fulfill()
-//                }
-//            }
-//        })
-//        
-//        viewModel.load()
-//        repository.send(value: expected)
-//        waitForExpectations(timeout: 2)
-//        publisher.cancel()
     }
     
     func testLoadError() throws {

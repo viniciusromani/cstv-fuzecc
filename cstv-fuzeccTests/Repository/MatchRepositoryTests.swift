@@ -8,7 +8,7 @@
 import XCTest
 import Resolver
 import Combine
-@testable import cstv_fuzecc
+@testable import CSTV
 
 final class MatchRepositorySourceTests: XCTestCase {
     private var remoteDataSource: MockRemoteMatchDataSource<[Match]>!
@@ -72,7 +72,6 @@ final class MatchRepositorySourceTests: XCTestCase {
     func testGetMatchesFromCache() throws {
         let repository = MatchRepository()
         let expected = [Match.mock(), Match.mock()]
-        let cacheKey = CachedDateFormatter.shared.fetchMatchesFilterFormatter().string(from: Date())
         let expectation = expectation(description: "expect to fetch from cache")
         
         let publisher = repository
