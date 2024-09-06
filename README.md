@@ -94,4 +94,4 @@ git checkout -b feature/<your-branch>
 
 ## License
 
-Distributed under MIT license.
+Distributed under [MIT license](License.md)
