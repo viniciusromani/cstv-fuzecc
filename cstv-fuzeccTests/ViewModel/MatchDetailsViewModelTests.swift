@@ -23,7 +23,9 @@ final class MatchDetailsViewModelTests: XCTestCase {
     }
     
     func testLoadSuccess() throws {
-        // needs to be implemented
+        /**
+         TODO: implement unit test to zipped api call
+         */
         XCTAssert(true)
     }
     
