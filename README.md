@@ -90,6 +90,10 @@ git checkout -b feature/<your-branch>
 
 - Improve unit test by testing MatchDetailsViewModel
 
+- Use Previews to test interface
+
+- Store Match Object status in an enum
+
 **Important**: Pagination was a spec but I decided not to implement since there is sorting on list. For pagination to work, it should have come sorted from backend
 
 ## License
